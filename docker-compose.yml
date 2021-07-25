@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  rest-service:
+    build:
+      context: ./rest-service
+      dockerfile: Dockerfile
+    volumes: 
+      - ./rest-service/app:/rest-service
+    ports:
+      - 80:80
+    expose:
+        - 80
+    environment: 
+      - "RABBITMQ_USER: guest"
+      - "RABBITMQ_PASS: guest"
+    depends_on:
+      - rabbitmq
+
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ${HOME}/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ${HOME}/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - rabbitmq_go_net
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    environment: 
+      - "RABBITMQ_DEFAULT_USER: guest"
+      - "RABBITMQ_DEFAULT_PASS: guest"
+    
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
