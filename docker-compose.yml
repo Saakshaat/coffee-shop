@@ -3,17 +3,17 @@ version: "3.8"
 services:
   rest-service:
     build:
-      context: ./rest-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./rest-service/Dockerfile
     volumes: 
-      - ./rest-service/app:/rest-service
+      - .:/rest-service
     ports:
       - 80:80
     expose:
         - 80
     environment: 
-      - "RABBITMQ_USER: guest"
-      - "RABBITMQ_PASS: guest"
+      - "RABBITMQ_USER=guest"
+      - "RABBITMQ_PASS=guest"
     depends_on:
       - rabbitmq
 
@@ -29,14 +29,14 @@ services:
         - ${HOME}/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
         - rabbitmq_go_net
+    environment: 
+      - "RABBITMQ_DEFAULT_USER=guest"
+      - "RABBITMQ_DEFAULT_PASS=guest"
     healthcheck:
       test: [ "CMD", "nc", "-z", "localhost", "5672" ]
       interval: 10s
       timeout: 10s
       retries: 5
-    environment: 
-      - "RABBITMQ_DEFAULT_USER: guest"
-      - "RABBITMQ_DEFAULT_PASS: guest"
     
 
 networks:

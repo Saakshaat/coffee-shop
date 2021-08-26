@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 fastapi = "*"
 uvicorn = "*"
+pika = "*"
 
 [requires]
 python_version = "3.9"
